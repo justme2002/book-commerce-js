@@ -1,27 +1,20 @@
-import express, { Express } from 'express'
+import { StartUp } from "./StartUp";
+import express from 'express'
+import { DbFatory } from "./bookcommerce.infrastructure/DAL/DbFactory";
+import { ApplicationDbContext } from "./bookcommerce.infrastructure/DAL/DbContext";
 const app = express()
 
-class StartUp
-{
-  public app?: Express
-  constructor(app?: Express)
-  {
-    this.app = app;
-  }
-  
-  public MapExpressMiddleware() : void
-  {
-    app.use(express.json())
-    app.use(express.urlencoded({ extended: true }))
-    app.use(express.raw())
-  }
+var dbFactory = new DbFatory(new ApplicationDbContext());
+var builder = new StartUp(app, dbFactory);
 
-  public BindPort(port: number) : void
-  {
-    app.listen(port, () => console.log(`port ${port} has launched`))
+const start = async () => {
+  try {
+    builder.MapExpressMiddleware()
+    builder.AddDataSourceContext()
+    builder.BindPort(4000)
+  } catch (error) {
+    console.log(error)
   }
 }
 
-new StartUp(app).MapExpressMiddleware()
-new StartUp(app).BindPort(4000)
-
+start()
