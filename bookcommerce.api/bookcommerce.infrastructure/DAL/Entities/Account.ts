@@ -1,4 +1,3 @@
-import { table } from 'console';
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm'
 
 @Entity("Account")

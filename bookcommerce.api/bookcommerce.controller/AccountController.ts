@@ -14,13 +14,7 @@ export class AccountController
   public accountService?: IAccountService
   constructor(accountService: IAccountService)
   {
-    this.accountService = new AccountService(
-      {
-        accountRepository: new AccountRepository(),
-        jwtService: new JwtService(),
-        tokenRepository: new TokenRepository()
-      }
-    )
+    this.accountService = accountService
   }
 
   //POST auth/register/customer

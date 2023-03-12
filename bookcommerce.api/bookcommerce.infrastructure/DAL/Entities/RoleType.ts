@@ -12,9 +12,7 @@ export class RoleType extends BaseEntity
   })
   public RoleType?: string
   @OneToMany(() => Role, (role) => role.RoleType, {
-    cascade: true,
-    onDelete: "CASCADE",
-    onUpdate: "CASCADE"
+    cascade: true
   })
   public Roles?: []
 
