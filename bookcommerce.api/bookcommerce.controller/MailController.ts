@@ -7,7 +7,7 @@ import { BaseResponse } from "../bookcommerce.infrastructure/DTO/Responses/BaseR
 export class MailController
 {
   public mailService?: MailService
-  constructor({ mailService }: { mailService: MailService })
+  constructor(mailService: MailService)
   {
     this.mailService = mailService
   }
@@ -15,15 +15,14 @@ export class MailController
 //POST /send-mail
   public async sendMail(req: Request, res: Response) : Promise<Response>
   {
-    const mailService = new MailService()
     const { to } = req.query
     const mailOptions: IMailOptions = {
       from: process.env.GMAIL,
       to: to as string,
       subject: "Register account verification mail",
-      text: `${req.protocol}://${req.hostname}:${process.env.PORT}/active?uuid=${uuid()}?email=${to}`
+      text: `${req.protocol}://${req.hostname}:${process.env.LOCAL_PORT}/active?uuid=${uuid()}&email=${to}`
     }
-    const result = await mailService?.SendMail(mailOptions)
+    const result = await this.mailService?.SendMail(mailOptions)
     if (!result?.status)
     {
       return res.status(400).json(new BaseResponse({

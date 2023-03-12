@@ -4,22 +4,22 @@ import { Account } from "../bookcommerce.infrastructure/DAL/Entities/Account";
 import { RefreshToken } from "../bookcommerce.infrastructure/DAL/Entities/RefreshToken";
 import { Role } from "../bookcommerce.infrastructure/DAL/Entities/Role";
 import { RoleType } from "../bookcommerce.infrastructure/DAL/Entities/RoleType";
-import { IAccountRepository } from "../bookcommerce.infrastructure/DAL/Interfaces/IAccountRepository";
-import { IRoleRepository } from "../bookcommerce.infrastructure/DAL/Interfaces/IRoleRepository";
-import { ITokenRepository } from "../bookcommerce.infrastructure/DAL/Interfaces/ITokenRepository";
 import { AccountViewModel } from "../bookcommerce.infrastructure/DTO/AccountViewModel";
 import { BaseResponse } from "../bookcommerce.infrastructure/DTO/Responses/BaseResponse";
 import { TokenResponse } from "../bookcommerce.infrastructure/DTO/Responses/TokenResponse";
-import { IAccountService, IAccountServiceDI } from "./Interfaces/IAccountService";
-import { IJwtService } from "./Interfaces/IJwtService";
+import { IAccountService } from "./Interfaces/IAccountService";
+import { AccountRepository } from "../bookcommerce.infrastructure/DAL/Repositories/AccountRepository";
+import { JwtService } from "./JwtService";
+import { RoleRepository } from "../bookcommerce.infrastructure/DAL/Repositories/RoleRepository";
+import { TokenRepository } from "../bookcommerce.infrastructure/DAL/Repositories/TokenRepository";
 
 export class AccountService implements IAccountService
 {
-  private accountRepository?: IAccountRepository
-  private jwtService?: IJwtService
-  private tokenRepository?: ITokenRepository
-  private roleRepository?: IRoleRepository
-  constructor({ accountRepository, jwtService, tokenRepository, roleRepository }: IAccountServiceDI)
+  private accountRepository?: AccountRepository
+  private jwtService?: JwtService
+  private tokenRepository?: TokenRepository
+  private roleRepository?: RoleRepository
+  constructor(accountRepository: AccountRepository, jwtService?: JwtService, tokenRepository?: TokenRepository, roleRepository?: RoleRepository)
   {
     this.accountRepository = accountRepository
     this.jwtService = jwtService
@@ -40,7 +40,6 @@ export class AccountService implements IAccountService
         accountViewModel.Username,
         accountViewModel.Email,
         password,
-        accountViewModel.IsActive
       )
       const result = this.accountRepository?.registerCustomer([account])
       if (!result)
@@ -72,8 +71,42 @@ export class AccountService implements IAccountService
     }
   }
 
-  RegisterVendor(accountViewModel: AccountViewModel): BaseResponse {
-    throw new Error("Method not implemented.");
+  public async RegisterVendor(accountViewModel: AccountViewModel): Promise<BaseResponse> {
+    try
+    {
+      var password : string | undefined = await this.hashPassword(accountViewModel.Password)
+      const account = new Account(
+        accountViewModel.Username,
+        accountViewModel.Email,
+        password,
+      )
+      const result = this.accountRepository?.registerVendor([account])
+      if (!result)
+      {
+        return new BaseResponse({
+          status: result,
+          message: "failed to create account"
+        })
+      }
+      const roleType = await this.isRoleTypeExist(RoleTypeConstant.VENDOR)
+      if (roleType)
+      {
+        await this.roleRepository?.AddUserToRole(new Role(account, roleType))
+      }
+      await this.roleRepository?.CreateRole(new RoleType(RoleTypeConstant.VENDOR))
+      const roleToAdd = await this.roleRepository?.GetRole(RoleTypeConstant.VENDOR)
+      this.roleRepository?.AddUserToRole(new Role(account, roleToAdd as RoleType))
+      return new BaseResponse({
+        status: result,
+        message: "account created"
+      })
+    } catch (error) {
+      console.log(error)
+      return new BaseResponse({
+        status: false,
+        message: "failed to create account"
+      })
+    }
   }
 
   RegisterAdmin(accountViewModel: AccountViewModel): BaseResponse {

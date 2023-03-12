@@ -1,12 +1,10 @@
-import express, { Application } from 'express'
-import { MailController } from '../bookcommerce.controller/MailController'
-import { authMiddleware } from '../bookcommerce.middleware/AuthMiddleware'
-import { MailService } from '../bookcommerce.service/MailService'
-export const MailRouter = express.Router()
+import { Express } from "express";
+import { IDIContainer } from 'rsdi' 
+import { MailController } from "../bookcommerce.controller/MailController";
 
-//DI
-const mailController = new MailController({
-  mailService: new MailService()
-})
-
-MailRouter.get("/send-mail", mailController.sendMail as Application)
+export default function mapMailRoute (app?: Express, diContainer?: IDIContainer)
+{
+  const mailController = diContainer?.get(MailController)
+  app?.route("/send-mail")
+    .get(mailController!.sendMail.bind(mailController))
+}

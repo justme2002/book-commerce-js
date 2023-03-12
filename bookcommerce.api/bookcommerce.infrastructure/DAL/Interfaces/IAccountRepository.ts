@@ -12,4 +12,5 @@ export interface IAccountRepository
   resetPassword(gmail: string): boolean
   signOut(): boolean
   refreshToken(): string
+  getAccountId(id: string) : Promise<Account>
 }

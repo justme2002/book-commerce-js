@@ -58,6 +58,7 @@ export class AccountRepository extends BaseRepository implements IAccountReposit
     const ExistAccount : ObjectLiteral | null | undefined = await this.GetOneBy({
       Email: accountViewModel.Email
     })
+    console.log(ExistAccount)
     const CastExistAccount = ExistAccount as Account
     CastExistAccount.IsActive = true
     const result = this.Update([CastExistAccount])
@@ -73,9 +74,18 @@ export class AccountRepository extends BaseRepository implements IAccountReposit
     throw new Error("Method not implemented.");
   }
 
-  private storeTokenToDb(refreshToken: RefreshToken)
+  public storeTokenToDb(refreshToken: RefreshToken)
   {
     this.GetRepository(RefreshToken)
     this.Add([refreshToken])
+  }
+
+  public async getAccountId(id: string) : Promise<Account>
+  {
+    this.GetRepository(Account)
+    const result = await this.GetOneBy({
+      AccountId: id
+    })
+    return result as Account
   }
 }

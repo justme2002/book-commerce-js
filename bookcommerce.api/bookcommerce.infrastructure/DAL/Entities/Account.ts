@@ -1,5 +1,5 @@
-import { table } from 'console';
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm'
+import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, Unique, OneToMany } from 'typeorm'
+import { RefreshToken } from './RefreshToken'
 
 @Entity("Account")
 export class Account extends BaseEntity
@@ -26,12 +26,15 @@ export class Account extends BaseEntity
   @Column("bool")
   public IsActive?: boolean
 
-  constructor(UserName?: string, Email?: string, Password?: string, IsActive?: boolean)
+  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.Account)
+  public refreshTokens?: RefreshToken[]
+
+  constructor(UserName?: string, Email?: string, Password?: string)
   {
     super()
     this.UserName = UserName
     this.Email = Email
     this.Password = Password
-    this.IsActive = IsActive
+    this.IsActive = false
   }
 }

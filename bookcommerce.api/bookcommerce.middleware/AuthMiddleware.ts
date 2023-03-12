@@ -17,6 +17,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     }
     req.id = decodedToken.id
     req.gmail = decodedToken.gmail
+    next()
   } catch (error) {
     console.log(error)
     return res.status(400).json({

@@ -9,16 +9,8 @@ import { IJwtService } from "./IJwtService";
 export interface IAccountService
 {
   RegisterCustomer(accountViewModel: AccountViewModel): Promise<BaseResponse>
-  RegisterVendor(accountViewModel: AccountViewModel): BaseResponse
+  RegisterVendor(accountViewModel: AccountViewModel): Promise<BaseResponse>
   RegisterAdmin(accountViewModel: AccountViewModel): BaseResponse
   Login(accountViewModel: AccountViewModel): Promise<TokenResponse>
   VerifyAtFirstLogin(accountViewModel: AccountViewModel): BaseResponse
-}
-
-export interface IAccountServiceDI
-{
-  accountRepository?: IAccountRepository
-  jwtService?: IJwtService
-  tokenRepository?: ITokenRepository,
-  roleRepository?: IRoleRepository
 }

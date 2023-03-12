@@ -1,4 +1,4 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm'
+import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, ManyToOne } from 'typeorm'
 import { Account } from './Account'
 
 @Entity("refresh_token")
@@ -10,8 +10,7 @@ export class RefreshToken extends BaseEntity
   @Column()
   public RefreshToken?: string
 
-  @OneToOne(() => Account)
-  @JoinColumn()
+  @ManyToOne(() => Account, (account) => account.refreshTokens)
   public Account?: Account
 
   constructor(RefreshToken?: string, Account?: Account)
