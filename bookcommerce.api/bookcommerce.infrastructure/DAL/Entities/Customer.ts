@@ -34,7 +34,7 @@ export class Customer extends BaseEntity
   })
   public Image?: Image
 
-  constructor(Fullname: string, Age: number, Account: Account, Image: Image)
+  constructor(Fullname?: string, Age?: number, Account?: Account, Image?: Image)
   {
     super()
     this.FullName = Fullname

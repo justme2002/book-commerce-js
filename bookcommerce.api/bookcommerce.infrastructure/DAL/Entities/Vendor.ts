@@ -1,9 +1,11 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm'
+import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, OneToMany } from 'typeorm'
 import { Account } from './Account'
 import { Address } from './Address'
 import { BankAccount } from './BankAccount'
 import { Image } from './Image'
 import { PhoneNumber } from './PhoneNumber'
+import { Product } from './Product'
+import { SubCategory } from './SubCategory'
 
 @Entity("Vendor")
 export class Vendor extends BaseEntity
@@ -35,6 +37,13 @@ export class Vendor extends BaseEntity
 
   @Column()
   public IsActiveToWork?: boolean
+
+  @OneToMany(() => SubCategory, (subCategory) => subCategory.Vendor)
+  public SubCategories?: SubCategory[]
+
+  @OneToMany(() => Product, (product) => product.Vendor)
+  public Products?: Product[]
+
 
   constructor(VendorName?: string, Account?: Account, Address?: Address, PhoneNumber?: PhoneNumber, BankAccount?: BankAccount, Image?: Image)
   {

@@ -19,6 +19,14 @@ import { VendorService } from './bookcommerce.service/VendorService';
 import { VendorRepository } from './bookcommerce.infrastructure/DAL/Repositories/VendorRepository';
 import MapVendorRoute from './bookcommerce.route/VendorRoute';
 import { VendorController } from './bookcommerce.controller/VendorController';
+import MapCategoryRoute from './bookcommerce.route/CategoryRoute';
+import { CategoryRepository } from './bookcommerce.infrastructure/DAL/Repositories/CategoryRepository';
+import { CategoryService } from './bookcommerce.service/CategoryService';
+import { CategoryController } from './bookcommerce.controller/CategoryController';
+import MapSubCategoryRoute from './bookcommerce.route/SubCategoryRoute';
+import { SubCategoryRepository } from './bookcommerce.infrastructure/DAL/Repositories/SubCategoryRepository';
+import { SubCategoryService } from './bookcommerce.service/SubCategoryService';
+import { SubCategoryController } from './bookcommerce.controller/SubCategoryController';
 
 const app = express()
 
@@ -60,6 +68,8 @@ export class StartUp
       [VendorRepository.name]: object(VendorRepository),
       [TokenRepository.name]: object(TokenRepository),
       [RoleRepository.name]: object(RoleRepository),
+      [CategoryRepository.name]: object(CategoryRepository),
+      [SubCategoryRepository.name]: object(SubCategoryRepository),
       //service
       [JwtService.name]: object(JwtService),
       [MailService.name]: object(MailService),
@@ -73,6 +83,14 @@ export class StartUp
         use(VendorRepository),
         use(AccountRepository)
       ),
+      [CategoryService.name]: object(CategoryService).construct(
+        use(CategoryRepository)
+      ),
+      [SubCategoryService.name]: object(SubCategoryService).construct(
+        use(SubCategoryRepository),
+        use(CategoryService),
+        use(VendorRepository)
+      ),
       //controller
       [AccountController.name]: object(AccountController).construct(
         use(AccountService)
@@ -82,6 +100,12 @@ export class StartUp
       ),
       [VendorController.name]: object(VendorController).construct(
         use(VendorService)
+      ),
+      [CategoryController.name]: object(CategoryController).construct(
+        use(CategoryService)
+      ),
+      [SubCategoryController.name]: object(SubCategoryController).construct(
+        use(SubCategoryService)
       )
     })
     return this.container as IDIContainer
@@ -92,6 +116,8 @@ export class StartUp
     mapAuthRoute(app, this.DependencyInjection() as IDIContainer)
     mapMailRoute(app, this.DependencyInjection() as IDIContainer)
     MapVendorRoute(app, this.DependencyInjection() as IDIContainer)
+    MapCategoryRoute(app, this.DependencyInjection() as IDIContainer)
+    MapSubCategoryRoute(app, this.DependencyInjection() as IDIContainer)
   }
 
   public BindPort(port?: number) : void

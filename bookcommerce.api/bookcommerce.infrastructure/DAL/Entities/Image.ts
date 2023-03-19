@@ -1,4 +1,5 @@
-import { Entity, BaseEntity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany } from 'typeorm'
+import { Entity, BaseEntity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany, ManyToOne } from 'typeorm'
+import { Product } from './Product'
 
 @Entity("Image")
 export class Image extends BaseEntity
@@ -10,6 +11,8 @@ export class Image extends BaseEntity
   public ImageUrl?: string
 
   //products
+  @ManyToOne(() => Product, (product) => product.Images)
+  public Product?: Product 
 
   //product variants
   constructor(ImageUrl: string)

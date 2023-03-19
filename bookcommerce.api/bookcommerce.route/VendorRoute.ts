@@ -7,4 +7,5 @@ export default function MapVendorRoute(app: Express, diContainer: IDIContainer)
 {
   const vendorController = diContainer.get(VendorController)
   app.post("/vendor/create", authMiddleware, vendorController.CreateVendorProfile.bind(vendorController))
+  app.get("/vendor/:id", vendorController.getVendor.bind(vendorController))
 }

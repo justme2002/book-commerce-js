@@ -4,6 +4,6 @@ import { VendorCreationRequest } from "../../bookcommerce.infrastructure/DTO/req
 export interface IVendorService
 {
   createProfile(vendorCreationRequest: VendorCreationRequest, accountId: string): Promise<boolean>
-  viewProfile(): Vendor
+  viewProfile(vendorId: string): Promise<Vendor | undefined>
   updateProfile(): boolean
 }

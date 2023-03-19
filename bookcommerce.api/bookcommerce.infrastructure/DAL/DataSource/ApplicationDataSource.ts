@@ -10,6 +10,12 @@ import { Role } from '../Entities/Role'
 import { RoleType } from '../Entities/RoleType'
 import { Vendor } from '../Entities/Vendor'
 import { Image } from '../Entities/Image'
+import { Category } from '../Entities/Category'
+import { SubCategory } from '../Entities/SubCategory'
+import { Product } from '../Entities/Product'
+import { ProductVariant } from '../Entities/ProductVariant'
+import { ProductRate } from '../Entities/ProductRate'
+import { ProductPrice } from '../Entities/ProductPrice'
 
 const dataSource = new DataSource({
   type: "mysql",
@@ -28,10 +34,17 @@ const dataSource = new DataSource({
     BankAccount,
     BankAccountProvider,
     Address,
-    PhoneNumber
+    PhoneNumber,
+    Category,
+    SubCategory,
+    Product,
+    ProductVariant,
+    ProductRate,
+    ProductPrice
   ],
   synchronize: false,
-  migrationsRun: true
+  migrationsRun: true,
+
 })
 
 export default dataSource
