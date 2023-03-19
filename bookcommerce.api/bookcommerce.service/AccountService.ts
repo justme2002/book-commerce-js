@@ -12,6 +12,7 @@ import { AccountRepository } from "../bookcommerce.infrastructure/DAL/Repositori
 import { JwtService } from "./JwtService";
 import { RoleRepository } from "../bookcommerce.infrastructure/DAL/Repositories/RoleRepository";
 import { TokenRepository } from "../bookcommerce.infrastructure/DAL/Repositories/TokenRepository";
+import { JwtPayload, Secret } from "jsonwebtoken";
 
 export class AccountService implements IAccountService
 {
@@ -145,7 +146,6 @@ export class AccountService implements IAccountService
         email: result.Email
       },
       process.env.REFRESH_TOKEN as string,
-      '24h'
       )
       const refreshTokenStoring = new RefreshToken(refreshToken, result) 
       this.tokenRepository?.StoreRefreshTokenToDB(refreshTokenStoring)
@@ -163,6 +163,52 @@ export class AccountService implements IAccountService
       })
     }
   }
+
+  public async RefreshToken(refreshToken: string): Promise<TokenResponse> {
+    try {
+      const verify = this.jwtService?.verifyToken(refreshToken, process.env.REFRESH_TOKEN as Secret)
+      if (!verify) return new TokenResponse ({
+        status: false,
+        message: "invalid token to refresh",
+        accessToken: "",
+        refreshToken: ""
+      })
+      this.tokenRepository?.GetRepository(RefreshToken)
+      const tokenToDeactive : RefreshToken = await this.tokenRepository?.GetOneBy({
+        RefreshToken: refreshToken
+      }) as RefreshToken
+      if (tokenToDeactive.isAlive == false) return new BaseResponse({
+        status: false,
+        message: "expired token"
+      })
+      tokenToDeactive.isAlive = false
+      await this.tokenRepository?.UpdateAsync([tokenToDeactive])
+      const updateTokenPayload = {
+        id: (verify as any).id,
+        username: (verify as any).username,
+        email: (verify as any).email 
+      }
+      const newAccessToken = this.jwtService?.generateAccessToken(updateTokenPayload, process.env.ACCESS_TOKEN as Secret, '30m')
+      const newRefreshToken = this.jwtService?.generateRefreshToken(updateTokenPayload, process.env.REFRESH_TOKEN as Secret)
+      await this.accountRepository?.refreshToken(refreshToken, newRefreshToken as string)
+
+      return new TokenResponse ({
+        status: true,
+        message: "token refreshed",
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken
+      })
+    } catch (error) {
+      console.log(error)
+      return new TokenResponse({
+        status: false,
+        message: "System error",
+        accessToken: "",
+        refreshToken: ""
+      })
+    }
+  }
+  
 
   public VerifyAtFirstLogin(accountViewModel: AccountViewModel): BaseResponse {
     try {
@@ -183,6 +229,22 @@ export class AccountService implements IAccountService
       return new BaseResponse({
         status: false,
         message: "failed to active user"
+      })
+    }
+  }
+
+  public async SignOut(refreshToken: string): Promise<BaseResponse> {
+    try {
+      const result = await this.accountRepository?.signOut(refreshToken)
+      return new BaseResponse({
+        status: result,
+        message: result ? "signed out" : "failed to sign out"
+      })
+    } catch (error) {
+      console.log(error)
+      return new BaseResponse({
+        status: false,
+        message: "unknown error, please try again"
       })
     }
   }

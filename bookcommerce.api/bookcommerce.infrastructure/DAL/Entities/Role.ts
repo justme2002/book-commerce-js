@@ -9,7 +9,9 @@ export class Role extends BaseEntity
   public RoleId?: string;
 
   @OneToOne(() => Account)
-  @JoinColumn()
+  @JoinColumn({
+    name: "AccountId"
+  })
   public Account?: Account
 
   @ManyToOne(() => RoleType, (roleType) => roleType.Roles, { 

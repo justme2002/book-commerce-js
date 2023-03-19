@@ -9,7 +9,6 @@ export class VendorService implements IVendorService
   constructor(private readonly vendorRepository: IVendorRepository, private readonly accountRepository: IAccountRepository)
   {
 
-
   }
 
   public async createProfile(vendorCreationRequest: VendorCreationRequest, accountId: string): Promise<boolean> {
@@ -28,11 +27,16 @@ export class VendorService implements IVendorService
       return false
     }
   }
-  viewProfile(): Vendor {
-    throw new Error("Method not implemented.");
+  public async viewProfile(vendorId: string): Promise<Vendor | undefined> {
+    try {
+      if (!vendorId) return new Vendor()
+      const result = await this.vendorRepository.viewProfile(vendorId)
+      return result
+    } catch (error) {
+      console.log(error)
+    }
   }
   updateProfile(): boolean {
     throw new Error("Method not implemented.");
   }
-
 }

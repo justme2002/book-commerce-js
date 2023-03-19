@@ -3,6 +3,7 @@ import { Account } from './Account'
 import { Address } from './Address'
 import { PhoneNumber } from './PhoneNumber'
 import { Image } from './Image'
+import { Order } from './Order'
 
 @Entity("Customer")
 export class Customer extends BaseEntity
@@ -34,7 +35,10 @@ export class Customer extends BaseEntity
   })
   public Image?: Image
 
-  constructor(Fullname: string, Age: number, Account: Account, Image: Image)
+  @OneToMany(() => Order, order => order.Customer)
+  public orders?: Order[]
+
+  constructor(Fullname?: string, Age?: number, Account?: Account, Image?: Image)
   {
     super()
     this.FullName = Fullname

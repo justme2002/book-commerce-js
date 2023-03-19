@@ -1,6 +1,6 @@
 import { Entity, BaseEntity, Column, PrimaryGeneratedColumn } from 'typeorm'
 
-@Entity("BankAccountProvider")
+@Entity("Bank_account_provider")
 export class BankAccountProvider extends BaseEntity
 {
   @PrimaryGeneratedColumn("uuid")

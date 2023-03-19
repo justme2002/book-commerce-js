@@ -67,11 +67,28 @@ export class AccountRepository extends BaseRepository implements IAccountReposit
   public resetPassword(gmail: string): boolean {
     throw new Error("Method not implemented.");
   }
-  public signOut(): boolean {
-    throw new Error("Method not implemented.");
+
+  public async signOut(refreshToken?: string): Promise<boolean> {
+    this.GetRepository(RefreshToken)
+    const tokenToDeactive: RefreshToken = await this.GetOneBy({
+      RefreshToken: refreshToken
+    }) as RefreshToken
+    if (!tokenToDeactive) return false
+    tokenToDeactive.isAlive = false
+    const result = await this.UpdateAsync([tokenToDeactive])
+    return result
   }
-  public refreshToken(): string {
-    throw new Error("Method not implemented.");
+
+  public async refreshToken(refreshToken: string, newRefreshToken: string): Promise<boolean> {
+    this.GetRepository(RefreshToken)
+    const tokenToRefresh = await this.GetOneBy({
+      RefreshToken: refreshToken
+    })
+    const castTokenToRefresh = tokenToRefresh as RefreshToken
+    castTokenToRefresh.RefreshToken = newRefreshToken
+    castTokenToRefresh.isAlive = true
+    const result = await this.AddAsync([castTokenToRefresh])
+    return result
   }
 
   public storeTokenToDb(refreshToken: RefreshToken)

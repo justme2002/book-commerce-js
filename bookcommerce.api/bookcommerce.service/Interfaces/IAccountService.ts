@@ -13,4 +13,6 @@ export interface IAccountService
   RegisterAdmin(accountViewModel: AccountViewModel): BaseResponse
   Login(accountViewModel: AccountViewModel): Promise<TokenResponse>
   VerifyAtFirstLogin(accountViewModel: AccountViewModel): BaseResponse
+  RefreshToken(refreshToken: string, accountId: string): Promise<TokenResponse>
+  SignOut(refreshToken: string): Promise<BaseResponse>
 }

@@ -10,7 +10,7 @@ export interface IAccountRepository
   login(accountViewModel: AccountViewModel) : Promise<ObjectLiteral| null | undefined>
   verifyAtFirstLogin(accountViewModel: AccountViewModel): Promise<boolean>
   resetPassword(gmail: string): boolean
-  signOut(): boolean
-  refreshToken(): string
+  signOut(refreshToken?: string): Promise<boolean>
+  refreshToken(refreshToken: string, newRefreshToken: string): Promise<boolean>
   getAccountId(id: string) : Promise<Account>
 }

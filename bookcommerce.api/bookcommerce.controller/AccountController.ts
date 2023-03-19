@@ -106,4 +106,21 @@ export class AccountController
       message: result.message
     }))
   }
+
+  //POST /forgot-password
+  
+
+  //POST /refresh-token
+  public async RefreshToken(req: Request, res: Response) : Promise<Response> {
+    const token = req.headers["refresh-token"]
+    const result = await this.accountService?.RefreshToken(token as string)
+    return res.json(result)
+  }
+
+  //POST /sign-out
+  public async SignOut(req: Request, res: Response) : Promise<Response> {
+    const token = req.headers["refresh-token"]
+    const result = await this.accountService?.SignOut(token as string)
+    return res.json(result)
+  }
 }

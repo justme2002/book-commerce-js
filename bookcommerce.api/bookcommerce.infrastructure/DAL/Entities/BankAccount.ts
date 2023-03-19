@@ -1,7 +1,7 @@
 import { BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
 import { BankAccountProvider } from './BankAccountProvider'
 
-@Entity()
+@Entity("bank_account")
 export class BankAccount extends BaseEntity
 {
   @PrimaryGeneratedColumn("uuid")
@@ -20,7 +20,9 @@ export class BankAccount extends BaseEntity
   public CreatedYear?: number
 
   @OneToOne(() => BankAccountProvider)
-  @JoinColumn()
+  @JoinColumn({
+    name: "BankAccountProviderId"
+  })
   public BankAccountProvider?: BankAccountProvider
 
   constructor(BankAccountName?: string, BankAccountCode?: string, CreatedMonth?: number, CreatedYear?: number, BankAccountProvider?: BankAccountProvider)

@@ -10,6 +10,11 @@ export class RefreshToken extends BaseEntity
   @Column()
   public RefreshToken?: string
 
+  @Column({
+    default: true
+  })
+  public isAlive?: boolean
+
   @ManyToOne(() => Account, (account) => account.refreshTokens)
   public Account?: Account
 

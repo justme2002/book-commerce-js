@@ -1,4 +1,4 @@
-import { Entity, EntityTarget, FindManyOptions, FindOptionsWhere, ObjectID, ObjectLiteral, Repository, SaveOptions } from "typeorm";
+import { DeleteResult, Entity, EntityTarget, FindManyOptions, FindOptionsWhere, ObjectID, ObjectLiteral, Repository, SaveOptions } from "typeorm";
 import { DbFatory } from "./DbFactory";
 // import { IBaseRepository } from "./Interfaces/IBaseRepository";
 
@@ -41,6 +41,14 @@ export class BaseRepository
     return true;
   }
 
+  public async UpdateAsync<T>(entity: T[], options?: SaveOptions & {
+    reload: false;
+  }): Promise<boolean>
+  {
+    await this.Repository?.save(entity);
+    return true;
+  }
+
   public async GetAll() : Promise<ObjectLiteral[] | undefined>
   {
     return await this.Repository?.find()
@@ -56,9 +64,9 @@ export class BaseRepository
     return await this.Repository?.findOneBy(options)
   }
 
-  public DeleteBy(options: string | number | FindOptionsWhere<ObjectLiteral> | Date | ObjectID | string[] | number[] | Date[] | ObjectID[]) : boolean
+  public async DeleteBy(options: string | number | FindOptionsWhere<ObjectLiteral> | Date | ObjectID | string[] | number[] | Date[] | ObjectID[]) : Promise<DeleteResult | undefined>
   {
-    this.Repository?.delete(options)
-    return true
+    const result = await this.Repository?.delete(options)
+    return result
   }
 }

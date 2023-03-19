@@ -1,9 +1,11 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm'
+import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, OneToMany } from 'typeorm'
 import { Account } from './Account'
 import { Address } from './Address'
 import { BankAccount } from './BankAccount'
 import { Image } from './Image'
 import { PhoneNumber } from './PhoneNumber'
+import { Product } from './Product'
+import { SubCategory } from './SubCategory'
 
 @Entity("Vendor")
 export class Vendor extends BaseEntity
@@ -15,26 +17,44 @@ export class Vendor extends BaseEntity
   public VendorName?: string
 
   @OneToOne(() => Address)
-  @JoinColumn()
+  @JoinColumn({
+    name: "AddressId"
+  })
   public Address?: Address
 
   @OneToOne(() => PhoneNumber)
-  @JoinColumn()
+  @JoinColumn({
+    name: "PhoneNumberId"
+  })
   public PhoneNumber?: PhoneNumber
 
   @OneToOne(() => Account)
-  @JoinColumn()
+  @JoinColumn({
+    name: "AccountId"
+  })
   public Account?: Account
 
   @OneToOne(() => BankAccount)
-  @JoinColumn()
+  @JoinColumn({
+    name: "BankAccountId"
+  })
   public BankAccount?: BankAccount
 
   @OneToOne(() => Image)
+  @JoinColumn({
+    name: "ImageId"
+  })
   public Image?: Image
 
   @Column()
   public IsActiveToWork?: boolean
+
+  @OneToMany(() => SubCategory, (subCategory) => subCategory.Vendor)
+  public SubCategories?: SubCategory[]
+
+  @OneToMany(() => Product, (product) => product.Vendor)
+  public Products?: Product[]
+
 
   constructor(VendorName?: string, Account?: Account, Address?: Address, PhoneNumber?: PhoneNumber, BankAccount?: BankAccount, Image?: Image)
   {

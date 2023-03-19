@@ -16,7 +16,10 @@ const start = async () => {
   try {
     builder.CreateEnviromentVariable()
     builder.MapExpressMiddleware()
+    builder.GenerateStaticFolder()
     builder.AddDataSourceContext()
+    builder.AddMulter()
+    builder.CreateCloudinaryUploader()
     builder.MapRoute()
     builder.BindPort(Number(process.env.LOCAL_PORT))
   } catch (error) {

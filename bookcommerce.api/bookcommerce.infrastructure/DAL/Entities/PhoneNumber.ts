@@ -1,7 +1,7 @@
 import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
 import { Customer } from './Customer'
 
-@Entity("PhoneNumber")
+@Entity("Phone_number")
 export class PhoneNumber extends BaseEntity
 {
   @PrimaryGeneratedColumn("uuid")
